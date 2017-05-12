@@ -1,0 +1,6 @@
+{
+    "repos": "https://github.com/huya-fed/m_debug.git",
+    "version": "v1.0.0",
+    "name": "m_debug",
+    "main": "m_debug.js"
+}
