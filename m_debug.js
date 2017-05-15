@@ -2365,52 +2365,52 @@ Nuclear.destroy=function(instance){
 ;(function () {
     var observe = function (target, arr,callback) {
         var _observe = function (target, arr, callback) {
-			if(!target.$observer)target.$observer=this;
-			var $observer=target.$observer;
-			var eventPropArr=[];
-			if (observe.isArray(target)) {
-			    if (target.length === 0) {
-			        target.$observeProps = {};
-			        target.$observeProps.$observerPath = "#";
-			    }
-			     $observer.mock(target);
-			   
+            if(!target.$observer)target.$observer=this;
+            var $observer=target.$observer;
+            var eventPropArr=[];
+            if (observe.isArray(target)) {
+                if (target.length === 0) {
+                    target.$observeProps = {};
+                    target.$observeProps.$observerPath = "#";
+                }
+                 $observer.mock(target);
+               
             }
             for (var prop in target) {
                 if (target.hasOwnProperty(prop)) {
                     if (callback) {
                         if (observe.isArray(arr) && observe.isInArray(arr, prop)) {
-							eventPropArr.push(prop);
+                            eventPropArr.push(prop);
                             $observer.watch(target, prop);
                         } else if (observe.isString(arr) && prop == arr) {
-							eventPropArr.push(prop);
+                            eventPropArr.push(prop);
                             $observer.watch(target, prop);
                         }                       
                     } else{
-						eventPropArr.push(prop);
+                        eventPropArr.push(prop);
                         $observer.watch(target, prop);
                     }
                 }
             }         
             $observer.target = target;
-			if(!$observer.propertyChangedHandler)$observer.propertyChangedHandler=[];
-			var propChanged=callback ? callback : arr;
-			$observer.propertyChangedHandler.push({ all: !callback, propChanged: propChanged, eventPropArr: eventPropArr });	
+            if(!$observer.propertyChangedHandler)$observer.propertyChangedHandler=[];
+            var propChanged=callback ? callback : arr;
+            $observer.propertyChangedHandler.push({ all: !callback, propChanged: propChanged, eventPropArr: eventPropArr });    
         }
         _observe.prototype = {
             "onPropertyChanged": function (prop, value,oldValue,target,path) {
                 if(value!== oldValue && this.propertyChangedHandler){
-					var rootName=observe._getRootName(prop,path);
-					for(var i=0,len=this.propertyChangedHandler.length;i<len;i++){
-						var handler=this.propertyChangedHandler[i];
-						if(handler.all||observe.isInArray(handler.eventPropArr,rootName)||rootName.indexOf("Array-")===0){
-							handler.propChanged.call(this.target, prop, value, oldValue, path);
-						}	
-					}			
-				}
+                    var rootName=observe._getRootName(prop,path);
+                    for(var i=0,len=this.propertyChangedHandler.length;i<len;i++){
+                        var handler=this.propertyChangedHandler[i];
+                        if(handler.all||observe.isInArray(handler.eventPropArr,rootName)||rootName.indexOf("Array-")===0){
+                            handler.propChanged.call(this.target, prop, value, oldValue, path);
+                        }   
+                    }           
+                }
                 if (prop.indexOf("Array-") !== 0 && typeof value === "object") {
-					this.watch(target,prop, target.$observeProps.$observerPath);
-				}
+                    this.watch(target,prop, target.$observeProps.$observerPath);
+                }
             },
             "mock": function (target) {
                 var self = this;
@@ -2419,18 +2419,18 @@ Nuclear.destroy=function(instance){
                 });
                 observe.methods.forEach(function (item) {
                     target[item] = function () {
-						var old =  Array.prototype.slice.call(this,0);
+                        var old =  Array.prototype.slice.call(this,0);
                         var result = Array.prototype[item].apply(this, Array.prototype.slice.call(arguments));
                         if (new RegExp("\\b" + item + "\\b").test(observe.triggerStr)) {
                             this.forEach(function (item, index) {
                                 item._nuclearIndex = index;
                             });
-							for (var cprop in this) {
-								if (this.hasOwnProperty(cprop)  && !observe.isFunction(this[cprop])) {
-									self.watch(this, cprop, this.$observeProps.$observerPath);
-								}
-							}
-							//todo
+                            for (var cprop in this) {
+                                if (this.hasOwnProperty(cprop)  && !observe.isFunction(this[cprop])) {
+                                    self.watch(this, cprop, this.$observeProps.$observerPath);
+                                }
+                            }
+                            //todo
                             self.onPropertyChanged("Array-"+item, this, old,this, this.$observeProps.$observerPath);
                         }
                         return result;
@@ -2442,13 +2442,13 @@ Nuclear.destroy=function(instance){
             },
             "watch": function (target, prop, path) {             
                 if (prop === "$observeProps"||prop === "$observer") return;
-				if (observe.isFunction(target[prop])) return;
-				if (!target.$observeProps) target.$observeProps = {};
-				if(path !== undefined){
-					target.$observeProps.$observerPath = path;
-				}else{
-					target.$observeProps.$observerPath = "#";
-				}
+                if (observe.isFunction(target[prop])) return;
+                if (!target.$observeProps) target.$observeProps = {};
+                if(path !== undefined){
+                    target.$observeProps.$observerPath = path;
+                }else{
+                    target.$observeProps.$observerPath = "#";
+                }
                 var self = this;              
                 var currentValue = target.$observeProps[prop] = target[prop];
                 Object.defineProperty(target, prop, {
@@ -2500,23 +2500,23 @@ Nuclear.destroy=function(instance){
     observe.isFunction = function (obj) {
         return Object.prototype.toString.call(obj) == '[object Function]';
     }
-	observe._getRootName=function(prop,path){
-		if(path==="#"){
-			return prop;
-		}
-		return path.split("-")[1];
-	}
+    observe._getRootName=function(prop,path){
+        if(path==="#"){
+            return prop;
+        }
+        return path.split("-")[1];
+    }
     
-	observe.add = function(obj , prop , value) {
-		obj[prop] = value;		
-		var $observer=obj.$observer;
-		$observer.watch(obj,prop);
-	}
-	Array.prototype.size = function (length) {
-		this.length = length;
-	}
-	
-	Nuclear.observe = observe;
+    observe.add = function(obj , prop , value) {
+        obj[prop] = value;      
+        var $observer=obj.$observer;
+        $observer.watch(obj,prop);
+    }
+    Array.prototype.size = function (length) {
+        this.length = length;
+    }
+    
+    Nuclear.observe = observe;
 })();
 
 //所有类的基类
@@ -2677,113 +2677,6 @@ App.loadFile = function (path) {
     return App.componentRes[path];
 }
 
-window.timing = window.timing || {
-        /**
-         * Outputs extended measurements using Navigation Timing API
-         * @param  Object opts Options (simple (bool) - opts out of full data view)
-         * @return Object      measurements
-         */
-        getTimes: function (opts) {
-            var performance = window.performance || window.webkitPerformance || window.msPerformance || window.mozPerformance;
-
-            if (performance === undefined) {
-                return false;
-            }
-
-            var timing = performance.timing;
-            var api = {};
-            opts = opts || {};
-
-            if (timing) {
-                if (opts && !opts.simple) {
-                    for (var k in timing) {
-                        if (timing.hasOwnProperty(k)) {
-                            api[k] = timing[k];
-                        }
-                    }
-                }
-
-
-                // Time to first paint
-                if (api.firstPaint === undefined) {
-                    // All times are relative times to the start time within the
-                    // same objects
-                    var firstPaint = 0;
-
-                    // Chrome
-                    if (window.chrome && window.chrome.loadTimes) {
-                        // Convert to ms
-                        firstPaint = window.chrome.loadTimes().firstPaintTime * 1000;
-                        api.firstPaintTime = firstPaint - (window.chrome.loadTimes().startLoadTime * 1000);
-                    }
-                    // IE
-                    else if (typeof window.performance.timing.msFirstPaint === 'number') {
-                        firstPaint = window.performance.timing.msFirstPaint;
-                        api.firstPaintTime = firstPaint - window.performance.timing.navigationStart;
-                    }
-                    // Firefox
-                    // This will use the first times after MozAfterPaint fires
-                    //else if (window.performance.timing.navigationStart && typeof InstallTrigger !== 'undefined') {
-                    //    api.firstPaint = window.performance.timing.navigationStart;
-                    //    api.firstPaintTime = mozFirstPaintTime - window.performance.timing.navigationStart;
-                    //}
-                    if (opts && !opts.simple) {
-                        api.firstPaint = firstPaint;
-                    }
-                }
-
-                // Total time from start to load
-                api.loadTime = timing.loadEventEnd - timing.fetchStart;
-                // Time spent constructing the DOM tree
-                api.domReadyTime = timing.domComplete - timing.domInteractive;
-                // Time consumed preparing the new page
-                api.readyStart = timing.fetchStart - timing.navigationStart;
-                // Time spent during redirection
-                api.redirectTime = timing.redirectEnd - timing.redirectStart;
-                // AppCache
-                api.appcacheTime = timing.domainLookupStart - timing.fetchStart;
-                // Time spent unloading documents
-                api.unloadEventTime = timing.unloadEventEnd - timing.unloadEventStart;
-                // DNS query time
-                api.lookupDomainTime = timing.domainLookupEnd - timing.domainLookupStart;
-                // TCP connection time
-                api.connectTime = timing.connectEnd - timing.connectStart;
-                // Time spent during the request
-                api.requestTime = timing.responseEnd - timing.requestStart;
-                // Request to completion of the DOM loading
-                api.initDomTreeTime = timing.domInteractive - timing.responseEnd;
-                // Load event time
-                api.loadEventTime = timing.loadEventEnd - timing.loadEventStart;
-
-                if (Math.abs(api.initDomTreeTime) > 1304136942)api.initDomTreeTime = 0;
-                if (Math.abs(api.loadTime) > 1304136942)api.loadTime = 0;
-            }
-
-            return api;
-        },
-        /**
-         * Uses console.table() to print a complete table of timing information
-         * @param  Object opts Options (simple (bool) - opts out of full data view)
-         */
-        printTable: function (opts) {
-            var table = {};
-            var data = this.getTimes(opts) || {};
-            Object.keys(data).sort().forEach(function (k) {
-                table[k] = {
-                    k: k,
-                    ms: data[k],
-                    s: +((data[k] / 1000).toFixed(2))
-                };
-            });
-            return data;
-        },
-        /**
-         * Uses console.table() to print a summary table of timing information
-         */
-        printSimpleTable: function () {
-            return this.printTable({simple: true});
-        }
-    };
 App.componentRes['component/alloy_lever/index.html'] =
 '<style scoped type="text/css">\
     * {\
@@ -2956,31 +2849,13 @@ App.componentRes['component/alloy_lever/index.html'] =
 <div class="at-ctn {{#hide}}at-hide{{/hide}}">\
     <div class="at-tabs">\
         <a class="at-tab {{tab1}}" onclick="goto(1,event)"  href="javascript:;">Console</a>\
-        <a class="at-tab {{tab2}}" onclick="goto(2,event)"  href="javascript:;">XHR</a>\
         <a class="at-tab {{tab3}}" onclick="goto(3,event)"  href="javascript:;">Resources</a>\
-        <a class="at-tab {{tab4}}" onclick="goto(4,event)"   href="javascript:;">Timeline</a>\
     </div>\
     <div class="at-content">\
         <div class="at-logs {{content1}}">\
             <div class="at-log">\
                 {{#logs}} <pre class="at-item at-item-{{type}}">{{msg}}</pre> {{/logs}}\
             </div>\
-        </div>\
-        <div class="at-logs {{content2}}">\
-            {{#xhrs}}\
-                <div class="at-item at-item-log">\
-                    <div class="at-url"><div></div><span>[Request Url]</span></div>\
-                    <div class="at-sub-dt"><span>{{method}}</span>: {{rqsUrl}}</div>\
-                </div>\
-                <div class="at-item at-item-log">\
-                    <div  class="at-url"><span>[Response Url]</span></div>\
-                   <div class="at-sub-dt">{{rspUrl}}</div>\
-                </div>\
-                <div class="at-item at-item-log">\
-                    <div  class="at-url"><span>[Response Data]</span></div>\
-                    <pre class="at-json"><code>{{json}}</code></pre>\
-                </div>\
-            {{/xhrs}}\
         </div>\
         <div class="at-logs {{content3}}">\
             <div class="at-item at-item-log">\
@@ -2992,320 +2867,235 @@ App.componentRes['component/alloy_lever/index.html'] =
                 <pre class="at-json"><code>{{resources.storage}}</code></pre>\
             </div>\
         </div>\
-        <div class="at-logs {{content4}}">\
-            <div class="at-log">\
-                {{#timeline}} <p class="at-item at-item-log">{{msg}}</p> {{/timeline}}\
-            </div>\
-        </div>\
     </div>\
     <div class="at-toolbar">\
         <a href="javascript:;" onclick="clearLogs()" class="at-tool at-clear">Clear</a>\
     </div>\
 </div>';
 
-;(function () {
-    var tpl = App.loadFile("component/alloy_lever/index.html");
+    ;(function () {
+        var tpl = App.loadFile("component/alloy_lever/index.html");
 
-    var AlloyLever = Nuclear.create({
-        install: function () {
-            this.initConsole();
-            this.initError();
-            this.initXHR();
+        var AlloyLever = Nuclear.create({
+            install: function () {
+                this.initConsole();
+                this.initError();
+                //this.initXHR();
 
-            this.initNetWork();
-            this.initCookie();
-            this.initStorage();
+                //this.initNetWork();
+                this.initCookie();
+                this.initStorage();
 
-        },
-        initXHR:function(){
-            (function(open){
-                window.XMLHttpRequest.prototype.open=function(){
-                    this.alloyLeverMethod=arguments[0];
-                    this.alloyLeverUrl=arguments[1];
-                    open.apply(this,arguments);
-                }
-            })(window.XMLHttpRequest.prototype.open)
-
-            var XHR = window.XMLHttpRequest;
-
-            window.XMLHttpRequest=function(){
-                var xhr = new XHR();
-                checkSuccess(xhr);
-                return xhr;
-            };
-
-            window.XMLHttpRequest.realXHR = XHR;
-
-            var self=this;
-
-            function checkSuccess(xhr) {
-                var isAvailable = true;
-                try {
-                    var xx = xhr.status;
-                } catch (e) {
-                    isAvailable = false;
+            },
+            installed: function () {
+                this.initEntry();
+            },
+            initConsole: function () {
+                window.console = {
+                    wc: window.console
                 };
-                if (isAvailable) {
-                    if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
-                        try {
-                            self.option.xhrs.realPush({
-                                method: xhr.alloyLeverMethod,
-                                rqsUrl: xhr.alloyLeverUrl,
-                                rspUrl: xhr.responseURL,
-                                json: JSON.stringify(JSON.parse(xhr.responseText), null, "\t")
-                            })
-                        } catch (e) {
-                            self.option.xhrs.realPush({
-                                method: xhr.alloyLeverMethod,
-                                rqsUrl: xhr.alloyLeverUrl,
-                                rspUrl: xhr.responseURL,
-                                json: xhr.responseText})
-                        }
-                    }else if(xhr.status>=400) {
-                        console.error(xhr.responseURL + ' ' + xhr.status + ' (' + xhr.statusText + ')')
+                var self = this;
+                ['log', 'error', 'warn', 'debug', 'info'].forEach(function (item) {
+                    //no local scope,has fn scope ,so item is item
+                    console[item] = function () {
+                        //this.wc===console.wc?
+                        this.wc[item].apply(this.wc, Array.prototype.slice.call(arguments));
+                        self.log(arguments, item);
                     }
-                    else{
-                        window.setTimeout(function () {
-                            checkSuccess(xhr);
-                        }, 0);
+                });
+            },
+            onOptionChange: function (prop) {
+                if (prop === 'tx' || prop === 'ty')return false;
+            },
+            initError: function () {
+                //https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror
+                //todo ��try catch
+                window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+                    console.error('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
+                        + ' Column: ' + column + ' StackTrace: ' + errorObj);
+                }
+            },
+            touchStart:function(evt){
+                this.isTouchStart = true;
+                this.startX = evt.touches[0].pageX;
+                this.startY = evt.touches[0].pageY;
+                this.preX = this.startX;
+                this.preY = this.startY;
+                this.addClass(this.atEntry,'at-entry-active');
+            },
+            initEntry: function () {
+
+                window.addEventListener('touchmove', function (evt) {
+                    if (this.isTouchStart) {
+                        var dx = evt.touches[0].pageX - this.preX;
+                        var dy = evt.touches[0].pageY - this.preY;
+                        this.option.tx += dx;
+                        this.option.ty += dy;
+                        this.atEntry.style.webkitTransform =this.atEntry.style.transform = 'translate3d(' + this.option.tx + 'px, ' + this.option.ty + 'px, 0)';
+                        this.preX = evt.touches[0].pageX;
+                        this.preY = evt.touches[0].pageY;
+                        event.preventDefault();
                     }
+                }.bind(this), false);
+
+                window.addEventListener('touchend', function (evt) {
+                    this.isTouchStart = false;
+                    this.removeClass(this.atEntry,'at-entry-active');
+                }.bind(this), false);
+            },
+            toggleEntry:function(){
+                    this.toogle();
+            },
+            render: function () {
+                this.option['tab1'] = '';
+                this.option['tab3'] = '';
+                this.option['content1'] = '';
+                this.option['content3'] = '';
+                this.option['tab' + this.option.index] = 'at-active';
+                this.option['content' + this.option.index] = 'at-active';
+                return tpl;
+            },
+            goto: function (index,event) {
+                this.option.index = index;
+                event.stopPropagation();
+            },
+            log: function (msgs, type) {
+                var i = 0, len = msgs.length;
+                var output = "";
+                try {
+                    for (; i < len; i++) {
+                        output += this.toOutput(msgs[i]) + "\n";
+                    }
+                    this.option.logs.realPush({type: type, msg: output});
+                } catch (e) {
+                    output = "", i = 0;
+                    for (; i < len; i++) {
+                        output += msgs[i] + "  ";
+                    }
+                    this.option.logs.realPush({type: type, msg: output});
+                }
+
+            },
+            toOutput:function(obj){
+                if(this.isFunction(obj)){
+                    return obj.toString();
                 }else{
-                    window.setTimeout(function () {
-                        checkSuccess(xhr);
-                    }, 0);
+                    return JSON.stringify(obj, null, "\t");
                 }
+            },
+            isFunction :function (obj) {
+                return Object.prototype.toString.call(obj) == '[object Function]';
+            },
+            show: function () {
+                this.option.hide = false;
+            },
+            hide: function () {
+                this.option.hide = true;
+            },
+            toogle: function () {
+                this.option.hide = !this.option.hide;
+            },
+            clearLogs: function () {
+                switch(this.option.index)
+                {
+                    case 1:
+                        this.option.logs.size(0);
+                        break;
+                    case 2:
+                        this.option.xhrs.size(0);
+                        break;
+                    case 3:
+                        this.option.resources.cookie='';
+                        this.option.resources.storage='';
+                        break;
+                    case 4:
+                        this.option.timeline.size(0);
+                        break;
+                }
+
+            },
+            hasClass: function (obj, cls) {
+                return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+            },
+
+            addClass: function (obj, cls) {
+                if (!this.hasClass(obj, cls)) obj.className += " " + cls;
+            },
+
+            removeClass: function (obj, cls) {
+                if (this.hasClass(obj, cls)) {
+                    var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+                    obj.className = obj.className.replace(reg, ' ');
+                }
+            },
+            initCookie:function(){
+                var cookie =document.cookie;
+                var output = {};
+                cookie.split(/\s*;\s*/).forEach(function(pair) {
+                    pair = pair.split(/\s*=\s*/);
+                    output[pair[0]] = pair.splice(1).join('=');
+                });
+               this.option.resources.cookie= JSON.stringify(output, null, "\t");
+            },
+            initStorage:function(){
+                var output={};
+                for (var key in window.localStorage){
+                    output[key]=window.localStorage[key];
+                }
+                this.option.resources.storage=JSON.stringify(output, null, "\t");
             }
 
-        },
-        initNetWork: function () {
-            window.addEventListener('load', function () {
-                this.initTimeline();
-                var cssList = document.querySelectorAll('link[rel="stylesheet"]');
-                var jsList = document.querySelectorAll('script');
-                var imgList = document.querySelectorAll('img');
-
-                for (var i = 0, len = cssList.length; i < len; i++) {
-                    var href = cssList[i].getAttribute('href');
-                    if (href) {
-                        this.checkJSorCSS(href);
-                    }
-                }
-
-                for (i = 0, len = jsList.length; i < len; i++) {
-                    var url = jsList[i].getAttribute('src');
-                    if (url) {
-                        this.checkJSorCSS(url)
-                    }
-                }
-
-                for (i = 0, len = imgList.length; i < len; i++) {
-                    var src = imgList[i].getAttribute('src');
-                    if (src) {
-                        this.checkImg(src)
-                    }
-                }
-            }.bind(this));
-        },
-        checkImg: function (src) {
-            var img = new Image();
-            img.onerror=function(){
-                console.error(src+' 404 (Not Found)')
-            };
-            img.src = src;
-        },
-        checkJSorCSS: function (src) {
-            var xmlhttp = new window.XMLHttpRequest.realXHR;
-            xmlhttp.open("GET", src);
-            xmlhttp.onreadystatechange = function () {
-                if ((xmlhttp.status == 200) && (xmlhttp.readyState == 4)) {
-                }else if(xmlhttp.status == 404){
-                    console.error(src+' 404 (Not Found)')
-                }
-            };
-            //xmlhttp.onerror=function(){
-            //    console.error(src+' 404 (Not Found)')
-            //}
-            xmlhttp.send();
-
-        },
-        installed: function () {
-            this.initEntry();
-        },
-        initConsole: function () {
-            window.console = {
-                wc: window.console
-            };
-            var self = this;
-            ['log', 'error', 'warn', 'debug', 'info'].forEach(function (item) {
-                //no local scope,has fn scope ,so item is item
-                console[item] = function () {
-                    //this.wc===console.wc?
-                    this.wc[item].apply(this.wc, Array.prototype.slice.call(arguments));
-                    self.log(arguments, item);
-                }
-            });
-        },
-        onOptionChange: function (prop) {
-            if (prop === 'tx' || prop === 'ty')return false;
-        },
-        initError: function () {
-            //https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror
-            //todo ��try catch
-            window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-                console.error('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
-                    + ' Column: ' + column + ' StackTrace: ' + errorObj);
-            }
-        },
-        initTimeline: function () {
-            //https://github.com/addyosmani/timing.js
-            //timing.getTimes();
-            //timing.printSimpleTable();
-            var data = timing.printSimpleTable();
-            for (var key in data) {
-                if(data.hasOwnProperty(key)) {
-                    this.option.timeline.realPush({msg: key + ': ' + Math.round(data[key])});
-                }
-            }
-        },
-        touchStart:function(evt){
-            this.isTouchStart = true;
-            this.startX = evt.touches[0].pageX;
-            this.startY = evt.touches[0].pageY;
-            this.preX = this.startX;
-            this.preY = this.startY;
-            this.addClass(this.atEntry,'at-entry-active');
-        },
-        initEntry: function () {
-
-            window.addEventListener('touchmove', function (evt) {
-                if (this.isTouchStart) {
-                    var dx = evt.touches[0].pageX - this.preX;
-                    var dy = evt.touches[0].pageY - this.preY;
-                    this.option.tx += dx;
-                    this.option.ty += dy;
-                    this.atEntry.style.webkitTransform =this.atEntry.style.transform = 'translate3d(' + this.option.tx + 'px, ' + this.option.ty + 'px, 0)';
-                    this.preX = evt.touches[0].pageX;
-                    this.preY = evt.touches[0].pageY;
-                    event.preventDefault();
-                }
-            }.bind(this), false);
-
-            window.addEventListener('touchend', function (evt) {
-                this.isTouchStart = false;
-                this.removeClass(this.atEntry,'at-entry-active');
-            }.bind(this), false);
-        },
-        toggleEntry:function(){
-                this.toogle();
-        },
-        render: function () {
-            this.option['tab1'] = '';
-            this.option['tab2'] = '';
-            this.option['tab3'] = '';
-            this.option['tab4'] = '';
-            this.option['content1'] = '';
-            this.option['content2'] = '';
-            this.option['content3'] = '';
-            this.option['content4'] = '';
-            this.option['tab' + this.option.index] = 'at-active';
-            this.option['content' + this.option.index] = 'at-active';
-            return tpl;
-        },
-        goto: function (index,event) {
-            this.option.index = index;
-            event.stopPropagation();
-        },
-        log: function (msgs, type) {
-            var i = 0, len = msgs.length;
-            var output = "";
-            try {
-                for (; i < len; i++) {
-                    output += this.toOutput(msgs[i]) + "\n";
-                }
-                this.option.logs.realPush({type: type, msg: output});
-            } catch (e) {
-                output = "", i = 0;
-                for (; i < len; i++) {
-                    output += msgs[i] + "  ";
-                }
-                this.option.logs.realPush({type: type, msg: output});
-            }
-
-        },
-        toOutput:function(obj){
-            if(this.isFunction(obj)){
-                return obj.toString();
-            }else{
-                return JSON.stringify(obj, null, "\t");
-            }
-        },
-        isFunction :function (obj) {
-            return Object.prototype.toString.call(obj) == '[object Function]';
-        },
-        show: function () {
-            this.option.hide = false;
-        },
-        hide: function () {
-            this.option.hide = true;
-        },
-        toogle: function () {
-            this.option.hide = !this.option.hide;
-        },
-        clearLogs: function () {
-            switch(this.option.index)
-            {
-                case 1:
-                    this.option.logs.size(0);
-                    break;
-                case 2:
-                    this.option.xhrs.size(0);
-                    break;
-                case 3:
-                    this.option.resources.cookie='';
-                    this.option.resources.storage='';
-                    break;
-                case 4:
-                    this.option.timeline.size(0);
-                    break;
-            }
-
-        },
-        hasClass: function (obj, cls) {
-            return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
-        },
-
-        addClass: function (obj, cls) {
-            if (!this.hasClass(obj, cls)) obj.className += " " + cls;
-        },
-
-        removeClass: function (obj, cls) {
-            if (this.hasClass(obj, cls)) {
-                var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
-                obj.className = obj.className.replace(reg, ' ');
-            }
-        },
-        initCookie:function(){
-            var cookie =document.cookie;
-            var output = {};
-            cookie.split(/\s*;\s*/).forEach(function(pair) {
-                pair = pair.split(/\s*=\s*/);
-                output[pair[0]] = pair.splice(1).join('=');
-            });
-           this.option.resources.cookie= JSON.stringify(output, null, "\t");
-        },
-        initStorage:function(){
-            var output={};
-            for (var key in window.localStorage){
-                output[key]=window.localStorage[key];
-            }
-            this.option.resources.storage=JSON.stringify(output, null, "\t");
-        }
-
-    });
-    window.AlloyLever= AlloyLever;
+        });
+        window.AlloyLever= AlloyLever;
+    })();
 })();
-})();
+
+
 (function(){
+
+
+    var triggerLog = function(callback) {
+        var first = {
+            x: 0,
+            y: document.documentElement.clientHeight
+        };
+        var second = {
+            x: document.documentElement.clientWidth / 2,
+            y: 0
+        };
+        var third = {
+            x: document.documentElement.clientWidth,
+            y: document.documentElement.clientHeight
+        };
+        var flag1;
+        var flag2;
+        var distance = 80;
+
+        document.addEventListener('touchmove', function(e) {
+            if (flag1 && Math.abs(e.targetTouches[0].clientX - second.x) < distance && Math.abs(e.targetTouches[0].clientY - second.y) < distance) {
+                flag2 = true;
+            }
+            if (flag2 && Math.abs(e.targetTouches[0].clientX - third.x) < distance && Math.abs(e.targetTouches[0].clientY - third.y) < distance) {
+                callback();
+                flag1 = flag2 = false;
+            }
+        });
+        document.addEventListener('touchend', function() {
+
+            flag1 = flag2 = false;
+        });
+        document.addEventListener('touchstart', function(e) {
+
+            flag1 = flag2 = false;
+            if (Math.abs(e.targetTouches[0].clientX - first.x) < distance && Math.abs(e.targetTouches[0].clientY - first.y) < distance) {
+                flag1 = true;
+                e.preventDefault();
+            }
+        });
+    };
+
+
+
     try {
         var al=new AlloyLever({
             hide: true,
@@ -3320,11 +3110,14 @@ App.componentRes['component/alloy_lever/index.html'] =
             resources: {cookie: '', storage: ''}
         });
 
-        window.addEventListener('DOMContentLoaded',function(){
-            al.setNuclearContainer('body');
-        },false);
     }catch(e) {
         alert(e);
     };
+
+
+    triggerLog(function(){
+        al.setNuclearContainer('body')
+    })
+  
 
 })()
