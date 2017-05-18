@@ -2912,7 +2912,7 @@ App.componentRes['component/alloy_lever/index.html'] =
                 //todo ��try catch
                 var error = window.onerror;
                 window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-                    error.apply(window,arguments);
+                    error && error.apply(window,arguments);
                     console.error('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
                         + ' Column: ' + column + ' StackTrace: ' + errorObj);
                 }
