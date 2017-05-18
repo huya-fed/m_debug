@@ -2910,7 +2910,9 @@ App.componentRes['component/alloy_lever/index.html'] =
             initError: function () {
                 //https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror
                 //todo ��try catch
+                var error = window.onerror;
                 window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+                    error.apply(window,arguments);
                     console.error('Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber
                         + ' Column: ' + column + ' StackTrace: ' + errorObj);
                 }
