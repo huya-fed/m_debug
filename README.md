@@ -21,7 +21,7 @@
 
 	AlloyLever.config({
 	    cdn:'//hd.huya.com/m_debug/vconsole.min.js',  //vconsole的CDN地址
-	    reportUrl: "//a.qq.com",  //错误上报地址
+	    reportUrl: "//a.xxx.com",  //错误上报地址
 	    reportPrefix: 'qun',    //错误上报msg前缀，一般用于标识业务类型
 	    reportKey: 'msg',        //错误上报msg前缀的key，用户上报系统接收存储msg
 	    otherReport: {              //需要上报的其他信息
@@ -36,11 +36,11 @@ AlloyLever会监听window.onerror并把错误信息保存下来，并且上报�
 ### url唤起vConsole
 
 	//加载并显示log面板
-	http://localhost:63342/AlloyLever/index.html?vconsole=show
+	http://localhost:63342/index.html?vconsole=show
 	//加载但不显示log面板
-	http://localhost:63342/AlloyLever/index.html?vconsole=hide
+	http://localhost:63342/index.html?vconsole=hide
 	//不加载vConsole脚本
-	http://localhost:63342/AlloyLever/index.html
+	http://localhost:63342/index.html
 
 
 这些url的作用很好理解:
