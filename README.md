@@ -58,6 +58,7 @@ AlloyLever会监听window.onerror并把错误信息保存下来，并且上报�
 ### 第一种   模块化引用
 
 	require('m_debug')
+	 AlloyLever.vConsole(true)  // 强制出来
 
 ### 第二种   直接copy引用
 
