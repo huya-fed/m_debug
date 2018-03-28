@@ -64,7 +64,7 @@ AlloyLever会监听window.onerror并把错误信息保存下来，并且上报�
 
 在你的页面任何地方引用下面脚本就可以，但是该js必须引用在其他脚本之前。
 	
-	<script src="//hd.huya.com/m_debug/m_debug-min.js"></script>
+	<script src="//a.msstatic.com/huya/hd/cdn_libs/m_debug/m_debug-min.js"></script>
 
 务必记住，该js必须引用在其他脚本之前！！
 
